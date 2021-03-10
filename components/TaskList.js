@@ -28,8 +28,14 @@ const TaskList = () => {
   }, [dispatch]);
 
   return isLoading ? "...loading" :
-    <div>
-      <TaskForm dispatch={dispatch}/>
+    <div
+      style={{
+        background: "white",
+        width: "320px",
+        margin: "0 auto",
+      }}
+    >
+      <TaskForm dispatch={dispatch} />
       <ul>
         {order.map((task, i) =>
           <TaskItem

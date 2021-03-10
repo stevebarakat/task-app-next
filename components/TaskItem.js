@@ -65,6 +65,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
         key={task.id}
         ref={ref}
         drag
+        dragElastic={0.9}
         dragDirectionLock
         onDirectionLock={axis => axis === "x" ? setIsDraggingX(true) : setIsDraggingX(false)}
         layout="position"
@@ -114,7 +115,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
         ref={deleteButton}
         onClick={() => dispatch({ type: "DELETE_TASK", payload: task })}
         style={{
-          display: isDraggingX ? "flex" : "none",
+          visibility: isDraggingX ? "visible" : "hidden",
           position: "absolute",
           right: 0,
           top: 0,

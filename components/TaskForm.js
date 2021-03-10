@@ -20,6 +20,7 @@ const TaskForm = ({ dispatch }) => {
         onChange={handleChange} 
         value={value} 
         type="text" 
+        placeholder="Add Task"
         style={{width: "100%", padding: "0.25rem"}}  
       />
       <button type="submit">+</button>
