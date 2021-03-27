@@ -5,59 +5,61 @@ import { firestore } from "../firebase";
 
 const db = firestore;
 const docRef = db.collection("tasklist").doc("tasks");
+const DELETE_BTN_WIDTH = 70;
+
+let newTaskList = null;
+const useSwipe = (info, taskId, index, order) => {
+  const dragDistance = info?.offset.x;
+  const velocity = info?.velocity.x;
+  const taskSwiped = order.filter((task) => task.id === taskId)[0];
+
+  if (
+    (dragDistance < 0 || velocity < -500) &&
+    (dragDistance < -DELETE_BTN_WIDTH * 2 ||
+      (taskSwiped.isSwiped && dragDistance < -DELETE_BTN_WIDTH - 10))
+  ) {
+    newTaskList = order.filter(((_, i) => i !== index));
+    return newTaskList;
+  } else if (dragDistance > -DELETE_BTN_WIDTH && taskSwiped.isSwiped) {
+
+    newTaskList = order.map((item) => {
+      if (item.id === taskId) {
+        item.isSwiped = false;
+      }
+      return item;
+    });
+    return newTaskList;
+
+  } else if (dragDistance < 0 && dragDistance <= -DELETE_BTN_WIDTH / 3) {
+    newTaskList = order.map(item => {
+      if (item.id === taskId) {
+        item.isSwiped = true;
+      } else {
+        item.isSwiped = false;
+      }
+
+      return item;
+    });
+
+    return newTaskList;
+  }
+};
 
 const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task }) => {
   const ref = useMeasurePosition((pos) => updatePosition(i, pos));
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingX, setIsDraggingX] = useState(false);
+  const [dragInfo, setDragInfo] = useState(null);
   const deleteButton = useRef(null);
   const DELETE_BTN_WIDTH = deleteButton.current?.offsetWidth;
-  
+
   useEffect(() => {
     (async () => {
-      await docRef.set({ tasks: order });
+      await docRef.set({ tasks: state.tasks });
     })();
-  }, [order]);
+  }, [state]);
 
-  const handleSwipe = (info, taskId, index, order) => {
-
-    dispatch({ type: "UPDATE_ORDER", payload: order });
-    const dragDistance = info?.offset.x;
-    const velocity = info?.velocity.x;
-    const taskSwiped = state.tasks.filter((task) => task.id === taskId)[0];
-
-    if (
-      (dragDistance < 0 || velocity < -500) &&
-      (dragDistance < -DELETE_BTN_WIDTH * 2 ||
-        (taskSwiped.isSwiped && dragDistance < -DELETE_BTN_WIDTH - 10))
-    ) {
-      const newTasksList = state.tasks.filter((task) => task.id !== taskId);
-      dispatch({ type: "UPDATE_TASKS", payload: newTasksList });
-      dispatch({ type: "DELETE_TASK", payload: index });
-    } else if (dragDistance > -DELETE_BTN_WIDTH && taskSwiped.isSwiped) {
-
-      const newTasksList = state.tasks.map((item) => {
-        if (item.id === taskId) {
-          item.isSwiped = false;
-        }
-        return item;
-      });
-      dispatch({ type: "UPDATE_TASKS", payload: newTasksList });
-
-    } else if (dragDistance < 0 && dragDistance <= -DELETE_BTN_WIDTH / 3) {
-      const newTasksList = state.tasks.map((item) => {
-        if (item.id === taskId) {
-          item.isSwiped = true;
-        } else {
-          item.isSwiped = false;
-        }
-
-        return item;
-      });
-
-      dispatch({ type: "UPDATE_TASKS", payload: newTasksList });
-    }
-  };
+  useSwipe(dragInfo, task.id, i, order);
 
   return (
     <div style={{ position: "relative" }}>
@@ -79,7 +81,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
         onDragStart={() => setIsDragging(true)}
         onDragEnd={(_, info) => {
           setIsDragging(false);
-          handleSwipe(info, task.id, i, order);
+          setDragInfo(info);
         }}
         onViewportBoxUpdate={(_, delta) => {
           isDragging && updateOrder(i, delta.y.translate);
