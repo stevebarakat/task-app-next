@@ -14,14 +14,14 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
   const DELETE_BTN_WIDTH = deleteButton.current?.offsetWidth;
   
   useEffect(() => {
+    dispatch({ type: "UPDATE_ORDER", payload: order });
     (async () => {
       await docRef.set({ tasks: order });
     })();
   }, [order]);
 
-  const handleSwipe = (info, taskId, index, order) => {
+  const handleSwipe = (info, taskId) => {
 
-    dispatch({ type: "UPDATE_ORDER", payload: order });
     const dragDistance = info?.offset.x;
     const velocity = info?.velocity.x;
     const taskSwiped = state.tasks.filter((task) => task.id === taskId)[0];
@@ -77,7 +77,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
         onDragStart={() => setIsDragging(true)}
         onDragEnd={(_, info) => {
           setIsDragging(false);
-          handleSwipe(info, task.id, i, order);
+          handleSwipe(info, task.id);
         }}
         onViewportBoxUpdate={(_, delta) => {
           isDragging && updateOrder(i, delta.y.translate);
