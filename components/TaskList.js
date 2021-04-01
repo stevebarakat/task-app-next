@@ -19,14 +19,6 @@ const TaskList = () => {
   const [state, dispatch] = useReducer(tasksReducer, initialState);
   const [order, updatePosition, updateOrder] = usePositionReorder(state.tasks, dispatch);
 
-  // useEffect(() => {
-  //   return docRef.onSnapshot(snapshot => {
-  //     if (!snapshot.data()) return;
-  //     dispatch({ type: "UPDATE_TASKS", payload: snapshot.data().tasks });
-  //     setIsLoading(false);
-  //   });
-  // }, [dispatch]);
-
   useEffect(() => {
     return docRef.get().then(doc => {
       if (!doc.data().tasks) return;
