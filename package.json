@@ -10,6 +10,7 @@
   "dependencies": {
     "@popmotion/popcorn": "^0.4.4",
     "array-move": "^3.0.1",
+    "date-fns": "^2.19.0",
     "firebase": "^8.2.10",
     "framer-motion": "^3.10.2",
     "lodash": "^4.17.21",

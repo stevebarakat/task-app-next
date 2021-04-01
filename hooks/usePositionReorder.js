@@ -15,10 +15,10 @@ export function usePositionReorder(tasks, dispatch) {
   // sibling.
   const updateOrder = (i, dragOffset) => {
     const targetIndex = findIndex(i, dragOffset, positions);
-    if (targetIndex !== i) dispatch({ type: "UPDATE_ORDER", payload: (move(tasks, i, targetIndex)) });
+    if (targetIndex !== i) dispatch({ type: "UPDATE_TASKS", payload: (move(tasks, i, targetIndex)) });
   };
 
-  return [tasks, updatePosition, updateOrder];
+  return [updatePosition, updateOrder];
 }
 
 const buffer = 30;

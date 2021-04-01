@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { findIndex } from "lodash";
+import { firestore } from "./firebase";
+const db = firestore;
+const docRef = db.collection("tasklist").doc("tasks");
 
 export default function tasksReducer(state, action) {
   switch (action.type) {
@@ -25,7 +28,7 @@ export default function tasksReducer(state, action) {
         tasks: toggledTasks
       };
     case "SET_CURRENT_TASK":
-      console.log(state);
+      console.log("bub: ", state);
       return {
         ...state,
         currentTask: action.payload
@@ -36,6 +39,7 @@ export default function tasksReducer(state, action) {
       const taskIndex = findIndex(state.tasks, { id });
       tempTasks[taskIndex].text = action.payload;
       console.log(tempTasks[taskIndex].text);
+      // docRef.set({ tasks: tempTasks });
       return {
         ...state,
         currentTask: [],
@@ -46,12 +50,6 @@ export default function tasksReducer(state, action) {
         ...state,
         tasks: action.payload
       };
-    case "UPDATE_ORDER": {
-      return {
-        ...state,
-        tasks: action.payload
-      };
-    }
     case "DELETE_TASK":
       const filteredTasks = state.tasks.filter(
         (task) => task.id !== action.payload.id
@@ -60,11 +58,6 @@ export default function tasksReducer(state, action) {
         ...state,
         tasks: filteredTasks
       };
-    case "IS_DRAGGING":
-      return {
-        ...state,
-        isDragging: action.payload,
-      }
     default:
       return state;
   }

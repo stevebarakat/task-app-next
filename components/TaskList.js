@@ -1,30 +1,31 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { firestore } from '../firebase';
 import { usePositionReorder } from '../hooks/usePositionReorder';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
-import tasksReducer from '../tasksReducer';
+import FilterTasks from './FilterTasks';
+import { MyContext } from '../context/MyContext';
 
 const docRef = firestore.collection('tasklist').doc('tasks');
-const initialState = [
-  {
-    id: "34l5kj345k34j",
-    text: "Task One",
-    completed: false,
-  }
-];
 
 const TaskList = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [state, dispatch] = useReducer(tasksReducer, initialState);
-  const [order, updatePosition, updateOrder] = usePositionReorder(state.tasks, dispatch);
+  const { state, dispatch } = useContext(MyContext);
+  const [updatePosition, updateOrder] = usePositionReorder(state.tasks, dispatch);
+  const [filterType, setFilterType] = useState("all");
+  const handleSetFilterType = value => setFilterType(value);
 
+  const FILTER_MAP = {
+    all: () => true,
+    todo: task => !task.complete,
+    completed: task => task.complete,
+  };
   useEffect(() => {
     return docRef.get().then(doc => {
       if (!doc.data().tasks) return;
-      dispatch({ type: "UPDATE_TASKS", payload: doc.data().tasks});
+      dispatch({ type: "UPDATE_TASKS", payload: doc.data().tasks });
       setIsLoading(false);
-    })
+    });
   }, [dispatch]);
 
   return isLoading ? "...loading" :
@@ -36,18 +37,20 @@ const TaskList = () => {
       }}
     >
       <TaskForm dispatch={dispatch} />
+      <FilterTasks handleSetFilterType={filterType, handleSetFilterType} />
       <ul>
-        {order.map((task, i) =>
-          <TaskItem
-            key={task.id}
-            i={i}
-            task={task}
-            order={order}
-            updatePosition={updatePosition}
-            updateOrder={updateOrder}
-            state={state}
-            dispatch={dispatch}
-          />)}
+        {state.tasks
+          .filter(FILTER_MAP[filterType])
+          .map((task, i) =>
+            <TaskItem
+              key={task.id}
+              i={i}
+              task={task}
+              updatePosition={updatePosition}
+              updateOrder={updateOrder}
+              state={state}
+              dispatch={dispatch}
+            />)}
       </ul>
     </div>;
 };

@@ -1,38 +1,54 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { findIndex } from 'lodash';
+import { motion, AnimatePresence, AnimateSharedLayout } from 'framer-motion';
 import { useMeasurePosition } from '../hooks/useMeasurePosition';
+import { MdExpandMore } from 'react-icons/md';
+import ControlPanel from './ControlPanel';
 import { firestore } from "../firebase";
 
 const db = firestore;
 const docRef = db.collection("tasklist").doc("tasks");
 
-const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task }) => {
+const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => {
   const ref = useMeasurePosition((pos) => updatePosition(i, pos));
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingX, setIsDraggingX] = useState(false);
   const deleteButton = useRef(null);
   const DELETE_BTN_WIDTH = deleteButton.current?.offsetWidth;
-  
+
   useEffect(() => {
-    dispatch({ type: "UPDATE_ORDER", payload: order });
     (async () => {
-      await docRef.set({ tasks: order });
+      await docRef.set({ tasks: state.tasks });
     })();
-  }, [order]);
+  }, [state]);
+
+  function handleOpen() {
+    const tempTasks = state.tasks;
+    const id = task.id;
+    const taskIndex = findIndex(state.tasks, { id });
+    tempTasks.map((_, i) => {
+      if (taskIndex === i) {
+        return tempTasks[i].isOpen = !tempTasks[i].isOpen;
+      } else {
+        return tempTasks[i].isOpen = false;
+      }
+    });
+    dispatch({ type: "UPDATE_TASKS", payload: tempTasks });
+  }
 
   const handleSwipe = (info, taskId) => {
 
     const dragDistance = info?.offset.x;
     const velocity = info?.velocity.x;
-    const taskSwiped = state.tasks.filter((task) => task.id === taskId)[0];
+    const currentTask = state.tasks.filter((task) => task.id === taskId)[0];
 
     if (
       (dragDistance < 0 || velocity < -500) &&
       (dragDistance < -DELETE_BTN_WIDTH * 2 ||
-        (taskSwiped.isSwiped && dragDistance < -DELETE_BTN_WIDTH - 10))
+        (currentTask.isSwiped && dragDistance < -DELETE_BTN_WIDTH - 10))
     ) {
       dispatch({ type: "DELETE_TASK", payload: task });
-    } else if (dragDistance > -DELETE_BTN_WIDTH && taskSwiped.isSwiped) {
+    } else if (dragDistance > -DELETE_BTN_WIDTH && currentTask.isSwiped) {
 
       const newTasksList = state.tasks.map((item) => {
         if (item.id === taskId) {
@@ -108,6 +124,18 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
             { textDecoration: "line-through" } :
             { textDecoration: "none" }}
         >{task.text}</span>
+        <button onClick={handleOpen}>
+          <MdExpandMore
+            style={{
+              margin: "auto",
+              transform: task.isOpen ? "rotate(0deg)" : "rotate(90deg)",
+              transition: "all 0.25s ease-out"
+            }}
+          />
+        </button>
+        {task.isOpen ?
+          <ControlPanel/> : <></>
+        }
       </motion.li>
       <button
         ref={deleteButton}
