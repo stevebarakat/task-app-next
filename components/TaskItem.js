@@ -31,9 +31,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, order, task
       (dragDistance < -DELETE_BTN_WIDTH * 2 ||
         (taskSwiped.isSwiped && dragDistance < -DELETE_BTN_WIDTH - 10))
     ) {
-      const newTasksList = state.tasks.filter((task) => task.id !== taskId);
-      dispatch({ type: "UPDATE_TASKS", payload: newTasksList });
-      dispatch({ type: "DELETE_TASK", payload: index });
+      dispatch({ type: "DELETE_TASK", payload: task });
     } else if (dragDistance > -DELETE_BTN_WIDTH && taskSwiped.isSwiped) {
 
       const newTasksList = state.tasks.map((item) => {
