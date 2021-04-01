@@ -119,7 +119,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => 
           contentEditable
           suppressContentEditableWarning
           onFocus={() => dispatch({ type: "SET_CURRENT_TASK", payload: task })}
-          onBlur={e => dispatch({ type: "UPDATE_TASK", payload: e.currentTarget.innerText })}
+          onBlur={e => dispatch({ type: "UPDATE_TASK", payload: {field: "text", text: e.currentTarget.innerText} })}
           style={task.complete ?
             { textDecoration: "line-through" } :
             { textDecoration: "none" }}
@@ -134,7 +134,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => 
           />
         </button>
         {task.isOpen ?
-          <ControlPanel/> : <></>
+          <ControlPanel task={task} /> : <></>
         }
       </motion.li>
       <button

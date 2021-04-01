@@ -1,8 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { findIndex } from "lodash";
-import { firestore } from "./firebase";
-const db = firestore;
-const docRef = db.collection("tasklist").doc("tasks");
+
 
 export default function tasksReducer(state, action) {
   switch (action.type) {
@@ -37,9 +35,9 @@ export default function tasksReducer(state, action) {
       const tempTasks = state.tasks;
       const id = state.currentTask.id;
       const taskIndex = findIndex(state.tasks, { id });
-      tempTasks[taskIndex].text = action.payload;
+      let field = action.payload.field;
+      tempTasks[taskIndex][field] = action.payload[field];
       console.log(tempTasks[taskIndex].text);
-      // docRef.set({ tasks: tempTasks });
       return {
         ...state,
         currentTask: [],

@@ -38,6 +38,30 @@ export default function FilterTasks({
       </label>
       </div>
       <div>
+        <label htmlFor="dueSoon">
+          <input
+            id="dueSoon"
+            name="filtered-tasks"
+            type="radio"
+            value="dueSoon"
+            defaultChecked={filterType === 'dueSoon'}
+          />
+        Soon
+      </label>
+      </div>
+      <div>
+        <label htmlFor="overdue">
+          <input
+            id="overdue"
+            name="filtered-tasks"
+            type="radio"
+            value="overdue"
+            defaultChecked={filterType === 'overdue'}
+          />
+        Late
+      </label>
+      </div>
+      <div>
         <label htmlFor="completed">
           <input
             id="completed"
