@@ -19,6 +19,8 @@ const TaskList = () => {
     all: () => true,
     todo: task => !task.complete,
     completed: task => task.complete,
+    dueSoon: task => task.dueDate.dueSoon,
+    overdue: task => task.dueDate.overdue,
   };
   useEffect(() => {
     return docRef.get().then(doc => {

@@ -8,7 +8,13 @@ export default function tasksReducer(state, action) {
       const newTask = {
         id: uuidv4(),
         text: action.payload,
-        complete: false
+        complete: false,
+        dueDate: {
+          parsedDate: null,
+          distanceToNow: null,
+          dueSoon: null,
+          overdue: null,
+        }
       };
       const addedTasks = [...state.tasks, newTask];
       return {
