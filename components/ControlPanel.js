@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from 'react';
 import { format, differenceInHours, parseISO, formatDistanceToNow } from 'date-fns';
-import { MyContext } from '../context/MyContext';
+import { TasksContext } from '../context/TasksContext';
 
 const DATE_FORMAT = "M/d/yyyy, h:mm a";
 let distanceToNow, diffInHours, dueSoon, overdue;
 
 const ControlPanel = ({ task }) => {
-  const { state, dispatch } = useContext(MyContext);
+  const { state, dispatch } = useContext(TasksContext);
   function handleDateChange(e){
     const diffInHours = differenceInHours(new Date(format(parseISO(e.target.value), DATE_FORMAT)), Date.now());
     dispatch({

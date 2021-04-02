@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
 import FilterTasks from './FilterTasks';
-import { MyContext } from '../context/MyContext';
+import { TasksContext } from '../context/TasksContext';
 
 const docRef = firestore.collection('tasklist').doc('tasks');
 const TASK_DELETE_ANIMATION = { height: 0, opacity: 0 };
@@ -19,7 +19,7 @@ const TASK_DELETE_TRANSITION = {
 
 const TaskList = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const { state, dispatch } = useContext(MyContext);
+  const { state, dispatch } = useContext(TasksContext);
   const [updatePosition, updateOrder] = usePositionReorder(state.tasks, dispatch);
   const [filterType, setFilterType] = useState("all");
   const handleSetFilterType = value => setFilterType(value);
