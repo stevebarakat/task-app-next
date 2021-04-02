@@ -9,6 +9,8 @@ export default function tasksReducer(state, action) {
         id: uuidv4(),
         text: action.payload,
         complete: false,
+        dateCreated: Date.now(),
+        isOpen: false,
         dueDate: {
           parsedDate: null,
           distanceToNow: null,

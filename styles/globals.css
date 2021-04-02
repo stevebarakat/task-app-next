@@ -15,3 +15,46 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.blink {
+  /* opacity: 1; */
+  animation: blinker 1s step-start infinite;
+  animation-iteration-count: 5;
+}
+
+.badge {
+  margin-right: 2rem;
+  font-size: 0.55rem;
+  position: relative;
+  top: -5px;
+  background: hsla(0, 0%, 0%, 75%);
+  color: white;
+  text-transform: uppercase;
+  padding: 0.1rem 0.2rem;
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+.no-show {
+  opacity: 0;
+}
+
+.no-blink,
+.show {
+  opacity: 1;
+}
+
+@keyframes blinker {
+  1% {
+    opacitiy: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
