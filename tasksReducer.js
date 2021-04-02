@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { findIndex } from "lodash";
+import format from 'date-fns/format';
 
+const DATE_FORMAT = "M/d/yyyy, h:mm a"
 
 export default function tasksReducer(state, action) {
   switch (action.type) {
@@ -9,7 +11,7 @@ export default function tasksReducer(state, action) {
         id: uuidv4(),
         text: action.payload,
         complete: false,
-        dateCreated: Date.now(),
+        dateCreated: format(Date.now(), DATE_FORMAT),
         isOpen: false,
         dueDate: {
           parsedDate: null,

@@ -29,7 +29,7 @@ const TaskForm = ({ dispatch, handleSetSearchTerm, searchTerm }) => {
   function handleSubmit(e) {
     e.preventDefault();
     dispatch({ type: "ADD_TASK", payload: value });
-    setValue('');
+    setValue("");
   }
 
   return (
@@ -53,9 +53,7 @@ const TaskForm = ({ dispatch, handleSetSearchTerm, searchTerm }) => {
         onSubmit={e => handleSubmit(e)}
       >
         <button
-          onClick={e => handleToggleSearch(e)}
-        // onMouseEnter={handleToggleSearch}
-        // onMouseLeave={handleToggleSearch}
+          onMouseDown={handleToggleSearch}
         >{isSearch ? <BsSearch /> : <BsPencil />}
         </button>
         {isSearch ?
@@ -69,7 +67,7 @@ const TaskForm = ({ dispatch, handleSetSearchTerm, searchTerm }) => {
               value={searchTerm}
               onChange={handleSearch}
               required
-              style={{flexGrow: 1}}
+              style={{ flexGrow: 1 }}
             />
             {/* <label htmlFor="search">Search Tasks</label> */}
           </> :
@@ -83,7 +81,7 @@ const TaskForm = ({ dispatch, handleSetSearchTerm, searchTerm }) => {
               value={value}
               onChange={handleChange}
               required
-              style={{flexGrow: 1}}
+              style={{ flexGrow: 1 }}
             />
             {/* <label htmlFor="task">Add Task</label> */}
           </>

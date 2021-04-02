@@ -28,7 +28,8 @@ const ControlPanel = ({ task }) => {
         onFocus={() => dispatch({ type: "SET_CURRENT_TASK", payload: task })}
         onChange={e => handleDateChange(e)}
       />
-      <span style={{display: "block"}}>{task.dueDate.parsedDate}</span>
+      <span style={{display: "block"}}>{task.dueDate.parsedDate && "Due: " + task.dueDate.parsedDate}</span>
+      <span style={{display: "block"}}>{"Created: " + task.dateCreated}</span>
     </div>
   );
 };
