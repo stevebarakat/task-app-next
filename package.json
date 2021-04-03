@@ -20,5 +20,8 @@
     "react-icons": "^4.2.0",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.12.0"
   }
 }

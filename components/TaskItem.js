@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { findIndex } from 'lodash';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMeasurePosition } from '../hooks/useMeasurePosition';
+import { useMeasurePosition } from '@hooks/useMeasurePosition';
 import { MdExpandMore } from 'react-icons/md';
 import ControlPanel from './ControlPanel';
 import { firestore } from "../firebase";
@@ -115,19 +115,19 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => 
           zIndex: isDragging ? 5 : 1,
           position: "relative",
           background: "white",
-          border: "1px solid rgb(133, 133, 133)",
+          borderTop: "1px solid rgb(133, 133, 133)",
           display: "flex",
           justifyContent: "space-between"
         }}
       >
         <input
-          onChange={() => dispatch({ type: "TOGGLE_TASK", payload: task })}
+          onChange={() => dispatch({ type: "TOGGLE_IS_COMPLETED", payload: task })}
           type="checkbox"
           defaultChecked={task.complete}
         />
 
         <AnimatePresence>
-          {(isHoveringListItem && !task.dueDate.overdue && !task.isOpen) &&
+          {(isHoveringListItem && !task.dueDateMeta.overdue && !task.isOpen) &&
             <motion.div
               variants={variants}
               initial="hidden"
@@ -135,14 +135,14 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => 
               exit="hidden"
               className="badge"
             >
-              {task.dueDate.distanceToNow && "Due in " + task.dueDate.distanceToNow + " from now"}
+              {task.dueDateMeta.distanceToNow && "Due in " + task.dueDateMeta.distanceToNow + " from now"}
             </motion.div>
           }
         </AnimatePresence>
         <AnimatePresence>
-          {(isHoveringListItem && !task.dueDate.parsedDate && !task.isOpen) &&
+          {(isHoveringListItem && !task.dueDateMeta.dueDate && !task.isOpen) &&
             <div
-              onClick={handleOpen}
+              // onClick={handleOpen}
               variants={variants}
               initial="hidden"
               animate="visible"
@@ -154,7 +154,7 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => 
             </div>
           }
         </AnimatePresence>
-        {task.dueDate.overdue && <motion.div
+        {task.dueDateMeta.overdue && <motion.div
           overdue
           variants={variants}
           initial="hidden"
@@ -172,12 +172,12 @@ const TaskItem = ({ state, dispatch, i, updateOrder, updatePosition, task }) => 
             { flexGrow: 1, textDecoration: "none" }
           }
         >{task.text}</span>
-        <button onClick={handleOpen}>
+        <button onClick={handleOpen} style={{border: "none"}}>
           <MdExpandMore
             style={{
               margin: "auto",
               transform: task.isOpen ? "rotate(0deg)" : "rotate(90deg)",
-              transition: "all 0.25s ease-out"
+              transition: "all 0.25s ease-out",
             }}
           />
         </button>

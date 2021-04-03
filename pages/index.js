@@ -1,7 +1,8 @@
 import React, { useReducer } from 'react';
 import TaskList from '../components/TaskList';
-import { TasksContext } from '../context/TasksContext';
-import tasksReducer from '../tasksReducer';
+import { TasksContext } from '@lib/context';
+import tasksReducer from '@lib/tasksReducer';
+
 const initialState = {
   tasks: [
     {
@@ -16,11 +17,7 @@ const Home = () => {
   const [state, dispatch] = useReducer(tasksReducer, initialState);
   return (
     <TasksContext.Provider value={{ state, dispatch }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        height: '100vh'
-      }}>
+      <div className="container">
         <TaskList />
       </div>
     </TasksContext.Provider>

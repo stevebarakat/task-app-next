@@ -1,11 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
 import { firestore } from '../firebase';
-import { usePositionReorder } from '../hooks/usePositionReorder';
+import { sortBy } from 'lodash';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePositionReorder } from '@hooks/usePositionReorder';
+import useLocalStorage from '@hooks/useLocalStorage';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
 import FilterTasks from './FilterTasks';
-import { TasksContext } from '../context/TasksContext';
+import SortTasks from './SortTasks';
+import { TasksContext } from '@lib/context';
 
 const docRef = firestore.collection('tasklist').doc('tasks');
 const TASK_DELETE_ANIMATION = { height: 0, opacity: 0 };
@@ -21,8 +24,8 @@ const TaskList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { state, dispatch } = useContext(TasksContext);
   const [updatePosition, updateOrder] = usePositionReorder(state.tasks, dispatch);
-  const [filterType, setFilterType] = useState("all");
-  const handleSetFilterType = value => setFilterType(value);
+  const [filter, setFilter] = useLocalStorage('filter', 'all');
+  const handleSetFilter = value => setFilter(value);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSetSearchTerm = (term) => {
@@ -33,8 +36,8 @@ const TaskList = () => {
     all: () => true,
     todo: task => !task.complete,
     completed: task => task.complete,
-    dueSoon: task => task.dueDate.dueSoon,
-    overdue: task => task.dueDate.overdue,
+    dueSoon: task => task.dueDateMeta.dueSoon,
+    overdue: task => task.dueDateMeta.overdue,
     search: task => task.text.toLowerCase().includes(searchTerm)
   };
 
@@ -49,20 +52,22 @@ const TaskList = () => {
   return isLoading ? "...loading" :
     <div
       style={{
+        paddingTop: "1rem",
         background: "white",
         width: "320px",
         margin: "0 auto",
       }}
     >
       <TaskForm dispatch={dispatch} searchTerm={searchTerm} handleSetSearchTerm={handleSetSearchTerm} />
-      <FilterTasks handleSetFilterType={filterType, handleSetFilterType} />
+      <FilterTasks filter={filter} handleSetFilter={handleSetFilter} />
+      <SortTasks />
       <ul>
       {state.tasks.length === 0 ? (
         <p>You don't have any tasks.</p>
       ) : (
         <AnimatePresence>
-            {state.tasks
-            ?.filter(FILTER_MAP[filterType])
+            {_.sortBy(state.tasks, [state.sortBy])
+            ?.filter(FILTER_MAP[filter])
             .filter(task => task.text
               .toLowerCase()
               .includes(searchTerm)).map((task, i) => (
@@ -73,13 +78,13 @@ const TaskList = () => {
                 >
                 <TaskItem
                   key={task.id}
-              i={i}
-              task={task}
-              updatePosition={updatePosition}
-              updateOrder={updateOrder}
-              state={state}
-              dispatch={dispatch}
-            />
+                  i={i}
+                  task={task}
+                  updatePosition={updatePosition}
+                  updateOrder={updateOrder}
+                  state={state}
+                  dispatch={dispatch}
+                />
               </motion.div>
             ))}
         </AnimatePresence>

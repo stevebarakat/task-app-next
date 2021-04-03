@@ -37,7 +37,6 @@ const TaskForm = ({ dispatch, handleSetSearchTerm, searchTerm }) => {
       <AnimatePresence>
         {isHovering &&
           <motion.div
-            color="textColor"
             style={{ left: "0rem", top: "-1rem" }}
             className="badge"
             variants={variants}

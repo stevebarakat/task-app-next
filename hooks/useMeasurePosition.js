@@ -9,7 +9,7 @@ export function useMeasurePosition(update) {
   // Updating measured position of the item to calculate when to rearrange it.
   useEffect(() => {
     update({
-      height: ref.current.offsetHeight,
+      height: ref.current.offsetHeight / 50,
       top: ref.current.offsetTop
     });
   });
